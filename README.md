@@ -1,1 +1,1 @@
-# crypto-api-node-firebase
+# crypto-trade-node-api
