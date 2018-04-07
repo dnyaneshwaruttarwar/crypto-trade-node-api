@@ -287,7 +287,6 @@ app.post('/buyAndSellOrder', function(request, response) {
             cryptopia.submittrade(market, 'Buy', buyPrice, quantity, function(err, data) {
                 console.log("Buy Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
                 if (data && data.Success) {
-                    response.end(JSON.stringify("Buy Price: " + Number.parseFloat(firstSellOrder.Price.toFixed(8)) + " Sell Price: " + sellPrice));
                     var orderId = data.Data.OrderId;
                     var cancelOrderTimeout = setTimeout(function() {
                         clearInterval(sellOrderInterval);
