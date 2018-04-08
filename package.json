@@ -1,27 +1,28 @@
 {
-    "name": "node-restapi",
-    "version": "1.0.0",
-    "description": "",
-    "main": "main.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node main.js"
-    },
-    "author": {
-        "name": "Adam",
-        "email": "jstutorials1@gmail.com",
-        "url": "http://www.js-tutorials.com/"
-    },
-    "license": "MIT",
-    "dependencies": {
-        "async": "^2.6.0",
-        "body-parser": "^1.16.1",
-        "cors": "^2.8.4",
-        "cryptopia-node": "^0.7.0",
-        "express": "^4.14.1",
-        "node-binance-api": "^0.4.26",
-        "node-bittrex-api": "^0.8.3",
-        "promise": "^7.1.1",
-        "unirest": "^0.5.1"
-    }
+  "name": "node-restapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
+  },
+  "author": {
+    "name": "Adam",
+    "email": "jstutorials1@gmail.com",
+    "url": "http://www.js-tutorials.com/"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.0",
+    "body-parser": "^1.16.1",
+    "cors": "^2.8.4",
+    "cryptopia-node": "^0.7.0",
+    "express": "^4.14.1",
+    "node-binance-api": "^0.4.26",
+    "node-bittrex-api": "^0.8.3",
+    "promise": "^7.1.1",
+    "unirest": "^0.5.1",
+    "yobit": "0.0.1"
+  }
 }
