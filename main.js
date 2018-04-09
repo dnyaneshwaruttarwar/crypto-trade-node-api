@@ -36,6 +36,10 @@ var server = app.listen(server_port, server_ip_address, function() {
     console.log('Server started at port: ' + port);
 });
 
+app.get('/', function(req, res) {
+    res.sendFile('dist/index.html');
+});
+
 app.get('/sellOrder', function(request, response) {
     console.log(new Date().toLocaleTimeString() + new Date().getMilliseconds());
     var cryptopia = new Cryptopia('', '');
@@ -279,7 +283,7 @@ app.post('/buyAndSellOrder', function(request, response) {
             var firstSellOrder = data.body.Data.Sell[0];
             var buyPrice = Number.parseFloat(firstSellOrder.Price.toFixed(8));
             // TODO: Need to remove
-            // buyPrice = 0.00000001;
+            buyPrice = 0.00000001;
             var quantity = totalBtc / buyPrice;
             order.sellPercent = Number.parseInt(order.sellPercent);
             var sellPrice = (buyPrice + ((buyPrice * order.sellPercent) / 100)).toFixed(8);
@@ -287,73 +291,74 @@ app.post('/buyAndSellOrder', function(request, response) {
             // TODO: Need to remove
             // sellPrice = 0.10001000;
             console.log("Buy Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            response.end(JSON.stringify("Buy Price: " + buyPrice + " Sell Price: " + sellPrice));
-            // cryptopia.submittrade(market, 'Buy', buyPrice, quantity, function(err, data) {
-            //     console.log("Buy Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //     if (data && data.Success) {
-            //         var orderId = data.Data.OrderId;
-            //         var cancelOrderTimeout = setTimeout(function() {
-            //             clearInterval(sellOrderInterval);
-            //             console.log("Cancel Buy Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //             cryptopia.canceltrade('Buy', orderId, function(err, data) {
-            //                 console.log("Cancel Buy Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //                 if (data && data.Success) {
-            //                     response.end(JSON.stringify("Order is not filled. cancel buy order"));
-            //                 } else {
-            //                     response.end(JSON.stringify("Error while cancelling buy order"));
-            //                 }
-            //             });
-            //         }, 30000);
-            //         var sellOrderInterval = setInterval(function() {
-            //             console.log("Get Open Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //             cryptopia.getopenorders(market, function(err, openOrders) {
-            //                 console.log("Get Open Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //                 if (openOrders && openOrders.Success) {
-            //                     if (openOrders.Data) {
-            //                         if (openOrders.Data.length > 0) {
-            //                             var isOrderOpen = false;
-            //                             for (var i = 0; i < openOrders.Data.length; i++) {
-            //                                 if (openOrders.Data[i].OrderId == orderId) {
-            //                                     isOrderOpen = true;
-            //                                     break;
-            //                                 }
-            //                             }
-            //                             if (!isOrderOpen) {
-            //                                 clearTimeout(cancelOrderTimeout);
-            //                                 clearInterval(sellOrderInterval);
-            //                                 console.log("Sell Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //                                 cryptopia.submittrade(market, 'Sell', sellPrice, quantity, function(err, data) {
-            //                                     console.log("Sell Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //                                     if (data && data.Success) {
-            //                                         response.end(JSON.stringify("Sell Order Placed"));
-            //                                     } else {
-            //                                         response.end(JSON.stringify("Error while placing sell order"));
-            //                                     }
-            //                                 });
-            //                             }
-            //                         } else if (openOrders.Data.length == 0) {
-            //                             clearTimeout(cancelOrderTimeout);
-            //                             clearInterval(sellOrderInterval);
-            //                             console.log("Sell Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //                             cryptopia.submittrade(market, 'Sell', sellPrice, quantity, function(err, data) {
-            //                                 console.log("Sell Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
-            //                                 if (data && data.Success) {
-            //                                     response.end(JSON.stringify("Sell Order Placed"));
-            //                                 } else {
-            //                                     response.end(JSON.stringify("Error while placing sell order"));
-            //                                 }
-            //                             });
-            //                         }
-            //                     }
-            //                 } else {
-            //                     response.end(JSON.stringify("Error while open orders"));
-            //                 }
-            //             });
-            //         }, 2000);
-            //     } else {
-            //         response.end(JSON.stringify("Error while placing buy order"));
-            //     }
-            // });
+            // response.end(JSON.stringify("Buy Price: " + buyPrice + " Sell Price: " + sellPrice));
+            cryptopia.submittrade(market, 'Buy', buyPrice, quantity, function(err, data) {
+                console.log("Buy Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                if (data && data.Success) {
+                    var orderId = data.Data.OrderId;
+                    var cancelOrderTimeout = setTimeout(function() {
+                        clearInterval(sellOrderInterval);
+                        console.log("Cancel Buy Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                        cryptopia.canceltrade('Buy', orderId, function(err, data) {
+                            console.log("Cancel Buy Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                            if (data && data.Success) {
+                                response.end(JSON.stringify("Buy Price: " + firstSellOrder.Price.toFixed(8) + " Sell Price: " + sellPrice));
+                                // response.end(JSON.stringify("Order is not filled. cancel buy order"));
+                            } else {
+                                response.end(JSON.stringify("Error while cancelling buy order"));
+                            }
+                        });
+                    }, 30000);
+                    var sellOrderInterval = setInterval(function() {
+                        console.log("Get Open Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                        cryptopia.getopenorders(market, function(err, openOrders) {
+                            console.log("Get Open Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                            if (openOrders && openOrders.Success) {
+                                if (openOrders.Data) {
+                                    if (openOrders.Data.length > 0) {
+                                        var isOrderOpen = false;
+                                        for (var i = 0; i < openOrders.Data.length; i++) {
+                                            if (openOrders.Data[i].OrderId == orderId) {
+                                                isOrderOpen = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!isOrderOpen) {
+                                            clearTimeout(cancelOrderTimeout);
+                                            clearInterval(sellOrderInterval);
+                                            console.log("Sell Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                                            cryptopia.submittrade(market, 'Sell', sellPrice, quantity, function(err, data) {
+                                                console.log("Sell Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                                                if (data && data.Success) {
+                                                    response.end(JSON.stringify("Sell Order Placed"));
+                                                } else {
+                                                    response.end(JSON.stringify("Error while placing sell order"));
+                                                }
+                                            });
+                                        }
+                                    } else if (openOrders.Data.length == 0) {
+                                        clearTimeout(cancelOrderTimeout);
+                                        clearInterval(sellOrderInterval);
+                                        console.log("Sell Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                                        cryptopia.submittrade(market, 'Sell', sellPrice, quantity, function(err, data) {
+                                            console.log("Sell Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
+                                            if (data && data.Success) {
+                                                response.end(JSON.stringify("Sell Order Placed"));
+                                            } else {
+                                                response.end(JSON.stringify("Error while placing sell order"));
+                                            }
+                                        });
+                                    }
+                                }
+                            } else {
+                                response.end(JSON.stringify("Error while open orders"));
+                            }
+                        });
+                    }, 2000);
+                } else {
+                    response.end(JSON.stringify("Error while placing buy order"));
+                }
+            });
             // response.end(JSON.stringify("Buy Price: " + buyPrice + " Sell Price: " + sellPrice));
         });
     } else if (order.exchange === 'yobit') {
