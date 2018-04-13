@@ -9,6 +9,7 @@ var Cryptopia = require('cryptopia-node');
 var binance = require('node-binance-api');
 var bittrex = require('node-bittrex-api');
 var Yobit = require('yobit');
+var path = require('path');
 
 //start body-parser configuration
 app.use(bodyParser.json()); // to support JSON-encoded bodies
