@@ -22,7 +22,9 @@ var corsOptions = {
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
 };
 
-app.use(cors(corsOptions));
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// app.use(cors(corsOptions));
 //end body-parser configuration
 
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
@@ -36,9 +38,10 @@ var server = app.listen(server_port, server_ip_address, function() {
     console.log('Server started at port: ' + port);
 });
 
-app.get('/', function(req, res) {
-    res.sendFile('dist/index.html');
-});
+// app.get('/', function(req, res) {
+//     res.sendFile('index.html', { root: './dist' });
+// });
+
 
 app.get('/sellOrder', function(request, response) {
     console.log(new Date().toLocaleTimeString() + new Date().getMilliseconds());
