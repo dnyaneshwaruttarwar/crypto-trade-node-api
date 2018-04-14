@@ -293,7 +293,7 @@ app.post('/buyAndSellOrder', function(request, response) {
             var sellPrice = (buyPrice + ((buyPrice * order.sellPercent) / 100)).toFixed(8);
             sellPrice = Number.parseFloat(sellPrice);
             // TODO: Need to remove
-            // sellPrice = 0.10001000;
+            sellPrice = 0.10001000;
             console.log("Buy Order Start: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
             // response.end(JSON.stringify("Buy Price: " + buyPrice + " Sell Price: " + sellPrice));
             cryptopia.submittrade(market, 'Buy', buyPrice, quantity, function(err, data) {
@@ -306,6 +306,7 @@ app.post('/buyAndSellOrder', function(request, response) {
                         cryptopia.canceltrade('Buy', orderId, function(err, data) {
                             console.log("Cancel Buy Order End: " + new Date().toLocaleTimeString() + ' ' + new Date().getMilliseconds());
                             if (data && data.Success) {
+                                console.log("Buy Price: " + firstSellOrder.Price.toFixed(8) + " Sell Price: " + sellPrice);
                                 response.end(JSON.stringify("Buy Price: " + firstSellOrder.Price.toFixed(8) + " Sell Price: " + sellPrice));
                                 // response.end(JSON.stringify("Order is not filled. cancel buy order"));
                             } else {
